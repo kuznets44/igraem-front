@@ -1,0 +1,7 @@
+{
+  "name": "igraem",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
