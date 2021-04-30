@@ -61,7 +61,8 @@
     ]
   },
   "devDependencies": {
-    "@capacitor/cli": "2.4.7"
+    "@capacitor/cli": "2.4.7",
+    "react-jss": "^10.6.0"
   },
   "description": "An Ionic project"
 }
