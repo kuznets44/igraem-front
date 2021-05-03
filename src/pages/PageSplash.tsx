@@ -1,6 +1,7 @@
 import { IonContent, IonImg, IonItem, IonLabel, IonPage, IonProgressBar, IonRouterLink } from '@ionic/react';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import logo from '../assets/img/splash.jpg';
+//import logo from '../assets/img/splash_data_uri.jpeg';
 import { createUseStyles } from 'react-jss';
 
 
@@ -14,6 +15,10 @@ const useStyles = createUseStyles({
     textAlign: 'center',
     fontSize: '2rem!important',
     fontWeight: 'bold'
+  },
+  splashImage: {
+    width: '425px',
+    height: '247px'
   }
 });
 
@@ -27,7 +32,7 @@ const PageSplash: React.FC = () => {
     <IonPage>
       <IonContent fullscreen>
         <IonRouterLink className={css.splashLink} routerLink="/sports">
-          <IonImg src={logo} />
+          <IonImg src={logo} class={css.splashImage} />
           <IonItem color="danger">
             <IonLabel className={css.splashLabel}>ИГРАЕМ!</IonLabel>
           </IonItem>

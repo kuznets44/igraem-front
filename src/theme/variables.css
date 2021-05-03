@@ -239,3 +239,7 @@ ion-item-divider{
   margin-top: 0px;
   min-height: 10px!important;
 }
+
+.sc-ion-searchbar-md-h {
+  --box-shadow: none!important;
+}

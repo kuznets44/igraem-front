@@ -1,5 +1,5 @@
 import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useParams } from 'react-router';
 import { mockEventsList } from '../data/eventsList';
@@ -16,6 +16,9 @@ import iconInfo from '../assets/img/icons/info.svg';
 import { EventsListItem, GroupsListItem, User } from '../interfaces';
 import EventsList from '../components/EventsList';
 import { mockGroupsList } from '../data/groupsList';
+import { useSelector } from 'react-redux';
+import { State } from 'ionicons/dist/types/stencil-public-runtime';
+import axios from 'axios';
 
 const useStyles = createUseStyles({
   maxAvatar: {
@@ -47,9 +50,16 @@ const PageProfile: React.FC<{}> = (({}) : ReactElement => {
   const css = useStyles();
   const { userId } = useParams<{userId: string}>();
 
-  const user: User = users.find( item => item.id === parseInt(userId))!;
-  const userEvents: EventsListItem[] = mockEventsList.filter( item => user.events.includes(item.code));
-  const userGroups: GroupsListItem[] = mockGroupsList.filter( item => user.groups.includes(item.code));
+  const user = useSelector( (state: { userData: User})=> state.userData);
+  const [ eventsList, setEventsList ] = useState<EventsListItem[]>([]);
+  useEffect(() => {
+    (async () => {
+      const responseResult = await axios.get( `${process.env.REACT_APP_API_URL}/events/`,{params: {code:user.events}});
+      setEventsList(responseResult.data);
+    })();
+  },[]);
+
+
   
   return (
     <IonPage>
@@ -59,7 +69,7 @@ const PageProfile: React.FC<{}> = (({}) : ReactElement => {
                 <img src={`/assets/images/users/${user.avatar}`} />
               </IonAvatar> 
           <IonLabel>
-            <h1 className="ion-padding-start"><b>{user.name}</b></h1>
+            <h1 className="ion-padding-start"><b>{[user.name,user.lastName].join(' ')}</b></h1>
             <IonList>
               <IonItem lines="none" class="ion-no-margin">
                 <IonIcon class={css.icon} slot="start" color="primary" icon={iconPlace} />
@@ -74,7 +84,7 @@ const PageProfile: React.FC<{}> = (({}) : ReactElement => {
                 </IonLabel>
                 <IonItemGroup slot="end">
                 {
-                  userGroups.slice(0,4).map( (item, index) =>
+                  user.groups.slice(0,4).map( (item, index) =>
                   <IonAvatar className={css.miniAvatar} key={index}>
                     <img src={`/assets/images/groups/${item.avatar}`} />
                   </IonAvatar> 
@@ -90,7 +100,7 @@ const PageProfile: React.FC<{}> = (({}) : ReactElement => {
         <IonItem lines="full">
           <h3>СОБЫТИЯ</h3>
         </IonItem>
-        <EventsList list={userEvents} />
+        <EventsList list={eventsList} />
       </IonContent>
     </IonPage>
   );

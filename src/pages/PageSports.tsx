@@ -1,22 +1,39 @@
 import { IonContent, IonHeader, IonItem, IonItemDivider, IonList, IonPage, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SportsList from "../components/SportsList";
 import { mockGroupsList } from "../data/groupsList";
-import { GroupsListItem } from '../interfaces';
+import { GroupsListItem, SportsKind, User } from '../interfaces';
 
 import GroupsList from '../components/GroupsList';
+import { useSelector } from 'react-redux';
 
 
-const PageSports: React.FC = () => {
+const PageSports: React.FC = () => { 
 
   const [searchText, setSearchText] = useState('');
-  const myGroups: GroupsListItem[] = mockGroupsList;
+  //const myGroups: GroupsListItem[] = mockGroupsList;
+
+  const sportsKinds = useSelector( (state: {sportsKinds: SportsKind[]}) => state.sportsKinds );
+  const myGroups = useSelector( (state:{ userData: User}) => {
+    
+    const list: GroupsListItem[] = [];
+    
+    state.userData.groups.forEach( itemGroup => {
+      let listItem = {...itemGroup};
+      listItem.sports = sportsKinds.find( item => item.code === itemGroup.sportskind_code )!;
+      list.push(listItem);
+    });
+
+    return list;
+  });
+
+  console.log('myGroups',myGroups);
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonSearchbar class="ion-margin-top" color="white" placeholder="Поиск сообществ" value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>
+          <IonSearchbar color="white" placeholder="Поиск сообществ" value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>
         </IonToolbar>
       </IonHeader>
       
@@ -31,8 +48,9 @@ const PageSports: React.FC = () => {
         </IonList>
         
         <IonItemDivider></IonItemDivider>
-
-        <GroupsList name="Мои сообщества" list={myGroups} />
+        { myGroups &&
+          <GroupsList name="Мои сообщества" list={myGroups} />
+        }
       </IonContent>
     </IonPage>
   );

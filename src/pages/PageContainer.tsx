@@ -7,10 +7,8 @@ import {
   IonTabs
  } from '@ionic/react';
 
-import { Route, Switch, useLocation } from 'react-router-dom';
- 
-import Tab2 from '../pages/Tab2';
-import Tab3 from '../pages/Tab3';
+import { Redirect, Route, Switch } from 'react-router-dom';
+
 import PageSplash from './PageSplash';
 import PageSports from './PageSports';
 import PageNotFound from './PageNotFound';
@@ -18,20 +16,33 @@ import PageGroups from './PageGroups';
 import PageGroup from './PageGroup';
 import PageEvent from './PageEvent';
 import PageProfile from './PageProfile';
+import PageMyEvents from './PageMyEvents';
 
 
 /*icons*/
 import event from '../assets/img/icons/event.svg';
 import group from '../assets/img/icons/group.svg';
 import profile from '../assets/img/icons/profile.svg';
-
-
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchInitialData } from '../store';
+import { User } from '../interfaces';
 
 const PageContainer: React.FC = () => {
 
-  const location = useLocation();
-  console.log(location.pathname);
-  const showTabs =location.pathname === '/' ? false : true;
+  const dataIsLoaded = useSelector( (state: {dataIsLoaded: boolean}) => state.dataIsLoaded);
+  const userData = useSelector( (state:{userData:User}) => state.userData );
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    setTimeout(() => dispatch(fetchInitialData()), 1000);
+  },[]);
+
+  if( !dataIsLoaded ) {
+    return (
+      <PageSplash />
+    );
+  }
 
   return (
     <IonTabs>
@@ -52,32 +63,27 @@ const PageContainer: React.FC = () => {
           <Route exact path="/sports">
             <PageSports />
           </Route>
-          <Route exact path="/tab2">
-            <Tab2 />
-          </Route>
-          <Route exact path="/tab3">
-            <Tab3 />
+          <Route exact path="/myevents">
+            <PageMyEvents />
           </Route>
           <Route exact path="/">
-            <PageSplash />
+            <Redirect to="/sports" />
           </Route>
           <Route path="**">
             <PageNotFound />
           </Route>
         </Switch>
-        {/*
-        */}
       </IonRouterOutlet>
-      <IonTabBar color="primary" slot="bottom"  className={!showTabs ? "ion-hide": ""}>
+      <IonTabBar color="primary" slot="bottom">
         <IonTabButton tab="tabSports" href="/sports">
           <IonIcon icon={group} />
           <IonLabel>Сообщества</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="tabEvents" href="/events">
+        <IonTabButton tab="tabEvents" href="/myevents">
           <IonIcon color="danger" icon={event} />
           <IonLabel>События</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="tabProfile" href="/user-3">
+        <IonTabButton tab="tabProfile" href={`/user-${userData.code}`}>
           <IonIcon icon={profile} />
           <IonLabel>Профиль</IonLabel>
         </IonTabButton>

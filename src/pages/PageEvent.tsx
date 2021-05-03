@@ -1,10 +1,10 @@
-import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
-import React, { ReactElement, useState } from 'react';
+import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonProgressBar, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useParams } from 'react-router';
 import { mockEventsList } from '../data/eventsList';
 import { users } from '../data/userData';
-import { getPlural } from '../utils';
+import { getPlural, getEventDateString } from '../utils';
 import PostsList from '../components/PostsList';
 
 
@@ -13,7 +13,9 @@ import iconGroup from '../assets/img/icons/group_list.svg';
 import iconTime from '../assets/img/icons/time.svg';
 import iconInfo from '../assets/img/icons/info.svg';
 
-import { EventsListItem } from '../interfaces';
+import { EventsListItem, User } from '../interfaces';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const useStyles = createUseStyles({
   topContainer: {
@@ -35,14 +37,35 @@ const PageEvent: React.FC<{}> = (({}) : ReactElement => {
 
   const css = useStyles();
   const { eventCode } = useParams<{code: string, groupCode: string, eventCode: string}>();
+  const userData = useSelector( (state: {userData: User}) => state.userData );
 
-  const event: EventsListItem = mockEventsList.find( item => item.code === eventCode)!;
-  const participants = users.filter( item => {
-    if(item.events && item.events.includes(eventCode)) {
-      return item;
-    }
-    return false
-  });
+  const [ event, setEvent ] = useState<any>({});
+  const [ isUserInEvent, setIsUserInEvent ] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const responseResult = await axios( `${process.env.REACT_APP_API_URL}/events/${eventCode}`);
+      const eventData = responseResult.data;
+      setEvent(eventData);
+console.log('event data',eventData);
+      eventData.participants.forEach( (item: User) => {
+        if( item.code === userData.code ) {
+          setIsUserInEvent(true);
+          return;
+        }
+      });
+    })();
+  },[]);
+
+  if( event.name === undefined ) {
+    return (
+      <IonPage>
+        <IonContent fullscreen>
+          <IonProgressBar color="primary" type="indeterminate"></IonProgressBar>
+        </IonContent>
+      </IonPage>
+    );
+  }
   
   return (
     <IonPage>
@@ -55,17 +78,19 @@ const PageEvent: React.FC<{}> = (({}) : ReactElement => {
           </IonLabel>
         </IonItem>
 
-        <IonButton class="ion-padding-horizontal" style={ { width: "100%"} }>Хочу участвовать</IonButton>
+        <IonButton class="ion-padding-horizontal" style={ { width: "100%"} }>
+          { isUserInEvent ? 'Отказаться от участия' : 'Хочу участвовать' }
+        </IonButton>
         
         <IonList lines="none">
           <IonItem>
             <IonIcon slot="start" color="primary" icon={iconGroup} />
             <IonLabel color="primary">
-              <p>{participants.length} / {getPlural(event.participants.total,['участник','участника','участников'])}</p>
+              <p>{event.participants.length} / {getPlural(event.participantsTotal,['участник','участника','участников'])}</p>
             </IonLabel>
             <IonItemGroup class="ion-padding" slot="end">
             {
-              participants.slice(0,4).map( (item, index) =>
+              event.participants.slice(0,4).map( (item: User, index: number) =>
               <IonAvatar className={css.miniAvatar} key={index}>
                 <img src={`/assets/images/users/${item.avatar}`} />
               </IonAvatar> 
@@ -82,7 +107,7 @@ const PageEvent: React.FC<{}> = (({}) : ReactElement => {
           <IonItem>
             <IonIcon slot="start" color="primary" icon={iconTime} />
             <IonLabel color="primary">
-              <p>{`${event.date} c ${event.timeStart} до ${event.timeEnd}`}</p>
+              <p>{getEventDateString(event)}</p>
             </IonLabel>
           </IonItem>
           <IonItem>

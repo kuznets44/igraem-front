@@ -26,7 +26,7 @@ const PostsList: React.FC<{list: Post[]}> = (({list}) : ReactElement => {
           </IonAvatar>
           <IonLabel>
             <IonCardTitle color="primary" class={css.cardTitle}>{item.by.name}</IonCardTitle>
-            <IonCardSubtitle>{item.date}</IonCardSubtitle>
+            <IonCardSubtitle>{item.createdAt}</IonCardSubtitle>
           </IonLabel>
           <IonItemGroup class="ion-no-margin" slot="end">
             <IonIcon class="ion-margin-start" icon={iconLike} />

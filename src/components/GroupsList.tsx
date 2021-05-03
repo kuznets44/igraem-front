@@ -5,6 +5,9 @@ import { GroupsListItem } from '../interfaces';
 
 const GroupsList: React.FC<{name: string, list: GroupsListItem[]}> = (({name,list}) : ReactElement => {
   
+  if( list === undefined) {
+    return (<></>);
+  }
   const listOut  = list.map( item => (
     <IonItem  routerLink={`/sports/${item.sports.code}/${item.code}`}
               key={item.code}

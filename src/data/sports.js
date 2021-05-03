@@ -2,21 +2,21 @@ export const sports = [
   {
     code: 'hockey',
     name: 'Хоккей',
-    image: 'hockey.svg'
+    icon: 'hockey.svg'
   },
   {
     code: 'football',
     name: 'Футбол',
-    image: 'football.svg'
+    icon: 'football.svg'
   },
   {
     code: 'amfoot',
     name: 'Ам. фут.',
-    image: 'amfoot.svg'
+    icon: 'amfoot.svg'
   },
   {
     code: 'basketball',
     name: 'Баскетбол',
-    image: 'basketball.svg'
+    icon: 'basketball.svg'
   },
 ];

@@ -25,18 +25,24 @@ import React from 'react';
 /* Page container */
 import PageContainer from './pages/PageContainer';
 
+/* store */
+import { store } from './store';
+import { Provider } from 'react-redux';
+
 const useTheme = createUseStyles({});
 const App: React.FC = () => {
 
   const theme = useTheme();
   return (
-    <ThemeProvider theme={theme}>
-      <IonApp>
-        <IonReactRouter>
-          <PageContainer />
-        </IonReactRouter>
-      </IonApp>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <IonApp>
+          <IonReactRouter>
+            <PageContainer />
+          </IonReactRouter>
+        </IonApp>
+      </ThemeProvider>
+    </Provider>
   )
 };
 

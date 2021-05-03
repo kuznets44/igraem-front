@@ -1,5 +1,5 @@
-import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
-import React, { ReactElement, useState } from 'react';
+import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonProgressBar, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useParams } from 'react-router';
 import { mockGroupsList } from '../data/groupsList';
@@ -11,7 +11,9 @@ import EventsList from '../components/EventsList';
 
 import place from '../assets/img/icons/place.svg';
 import info from '../assets/img/icons/info.svg';
-import { EventsListItem } from '../interfaces';
+import { EventsListItem, GroupsListItem, SportsKind, User } from '../interfaces';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const useStyles = createUseStyles({
   topContainer: {
@@ -34,10 +36,47 @@ const PageGroup: React.FC<{}> = (({}) : ReactElement => {
   const css = useStyles();
   const { code, groupCode } = useParams<{code: string, groupCode: string}>();
 
-  const group = mockGroupsList.find( item => item.code === groupCode)!;
+  const sportsKind = useSelector( (state: {sportsKinds: SportsKind[]}) => state.sportsKinds.find ( item => item.code === code) );
+  const userData = useSelector( (state: {userData: User}) => state.userData );
+  
+  const [ group, setGroup ] = useState<any>({});
+  const [ isUserInGroup, setIsUserInGroup ] = useState(false);
+  
+  useEffect(() => {
+    (async () => {
+      const responseResult = await axios( `${process.env.REACT_APP_API_URL}/groups/${groupCode}`);
+      const groupData = responseResult.data;
+      groupData.sports = sportsKind;
+      setGroup(groupData);
+
+      groupData.participants.forEach( (item: User) => {
+        if( item.code === userData.code ) {
+          setIsUserInGroup(true);
+          return;
+        }
+      });
+    })();
+  },[]);
+
+  const [ eventsList, setEventsList ] = useState<EventsListItem[]>([]);
+  useEffect(() => {
+    (async () => {
+      const responseResult = await axios( `${process.env.REACT_APP_API_URL}/events/?group=${groupCode}`);
+      setEventsList(responseResult.data);
+    })();
+  },[]);
+
   const participants = users.filter( item => item.groups.includes(groupCode) );
 
-  const eventsList: EventsListItem[] = mockEventsList.filter( item => item.group.code === groupCode);
+  if( group.name === undefined ) {
+    return (
+      <IonPage>
+        <IonContent fullscreen>
+          <IonProgressBar color="primary" type="indeterminate"></IonProgressBar>
+        </IonContent>
+      </IonPage>
+    );
+  }
   
   return (
     <IonPage>
@@ -51,14 +90,16 @@ const PageGroup: React.FC<{}> = (({}) : ReactElement => {
         </IonItem>
         <IonItemGroup class="ion-padding">
           {
-            participants.slice(0,10).map( (item, index) =>
+            group.participants.slice(0,10).map( (item: User, index: number) =>
              <IonAvatar className={css.miniAvatar} key={index}>
                <img src={`/assets/images/users/${item.avatar}`} />
              </IonAvatar> 
             )
           }
         </IonItemGroup>
-        <IonButton class="ion-padding-horizontal" style={ { width: "100%"} }>Покинуть сообщество</IonButton>
+        <IonButton class="ion-padding-horizontal" style={ { width: "100%"} }>
+          {isUserInGroup ? 'Покинуть' : 'Вступить в'} сообщество
+        </IonButton>
         <IonList lines="none">
           <IonItem>
             <IonIcon slot="start" color="primary" icon={place} />
