@@ -1,13 +1,16 @@
-import { IonContent, IonHeader, IonPage, IonProgressBar, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
+import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonPage, IonProgressBar, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
 import axios from 'axios';
+import { add } from 'ionicons/icons';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import GroupsList from '../components/GroupsList';
 
 import { GroupsListItem, SportsKind, User } from '../interfaces';
 
 const PageGroups: React.FC<{}> = (({}) : ReactElement => {
+
+  const history = useHistory();
 
   const { code } = useParams<{code: string}>();
 
@@ -19,10 +22,10 @@ const PageGroups: React.FC<{}> = (({}) : ReactElement => {
   const [ allGroups, setAllGroups ] = useState<GroupsListItem[]>([]);
   const [ myGroups, setMyGroups ] = useState<GroupsListItem[]>([]);
 
+  //получаем данные о группах в текущем виде спорта
   useEffect(() => {
     (async () => {
       const responseResult = await axios( `${process.env.REACT_APP_API_URL}/groups/?sportskind=${code}`);
-console.log('responseResult',responseResult);
       let list: GroupsListItem[] = [];
       responseResult.data.forEach( (itemGroup: GroupsListItem) => {
         let listItem = {...itemGroup};
@@ -59,6 +62,13 @@ console.log('responseResult',responseResult);
         <GroupsList name={`${sportsKind!.name}: мои сообщества`} list={myGroups} />
 
         <GroupsList name={`${sportsKind!.name}: все сообщества`} list={allGroups} />
+
+        <IonFab vertical="bottom" horizontal="end" slot="fixed">
+          <IonFabButton onClick={() => history.push(`/sports/${code}/addgroup`)}>
+            <IonIcon icon={add} />
+          </IonFabButton>
+        </IonFab>
+        
       </IonContent>
     </IonPage>
   );

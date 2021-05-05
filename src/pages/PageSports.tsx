@@ -1,14 +1,18 @@
-import { IonContent, IonHeader, IonItem, IonItemDivider, IonList, IonPage, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
-import React, { useEffect, useState } from 'react';
-import SportsList from "../components/SportsList";
-import { mockGroupsList } from "../data/groupsList";
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonItem, IonItemDivider, IonList, IonPage, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
+import { add } from 'ionicons/icons';
+
 import { GroupsListItem, SportsKind, User } from '../interfaces';
 
 import GroupsList from '../components/GroupsList';
-import { useSelector } from 'react-redux';
+import SportsList from "../components/SportsList";
+import { useHistory } from 'react-router-dom';
 
 
 const PageSports: React.FC = () => { 
+
+  const history = useHistory();
 
   const [searchText, setSearchText] = useState('');
   //const myGroups: GroupsListItem[] = mockGroupsList;
@@ -51,6 +55,12 @@ const PageSports: React.FC = () => {
         { myGroups &&
           <GroupsList name="Мои сообщества" list={myGroups} />
         }
+
+        <IonFab vertical="bottom" horizontal="end" slot="fixed">
+          <IonFabButton onClick={() => history.push('/sports/addgroup')}>
+            <IonIcon icon={add} />
+          </IonFabButton>
+        </IonFab>
       </IonContent>
     </IonPage>
   );

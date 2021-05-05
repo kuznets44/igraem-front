@@ -68,6 +68,10 @@ const PageGroup: React.FC<{}> = (({}) : ReactElement => {
 
   const participants = users.filter( item => item.groups.includes(groupCode) );
 
+  const handleClick = () => {
+    
+  };
+
   if( group.name === undefined ) {
     return (
       <IonPage>
@@ -97,7 +101,7 @@ const PageGroup: React.FC<{}> = (({}) : ReactElement => {
             )
           }
         </IonItemGroup>
-        <IonButton class="ion-padding-horizontal" style={ { width: "100%"} }>
+        <IonButton class="ion-padding-horizontal" onClick={handleClick} style={ { width: "100%"} }>
           {isUserInGroup ? 'Покинуть' : 'Вступить в'} сообщество
         </IonButton>
         <IonList lines="none">

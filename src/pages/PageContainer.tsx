@@ -17,13 +17,14 @@ import PageGroup from './PageGroup';
 import PageEvent from './PageEvent';
 import PageProfile from './PageProfile';
 import PageMyEvents from './PageMyEvents';
+import PageAddGroup from './PageAddGroup';
 
 
 /*icons*/
 import event from '../assets/img/icons/event.svg';
 import group from '../assets/img/icons/group.svg';
 import profile from '../assets/img/icons/profile.svg';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchInitialData } from '../store';
 import { User } from '../interfaces';
@@ -53,6 +54,12 @@ const PageContainer: React.FC = () => {
           </Route>
           <Route path="/sports/:code/:groupCode/event-:eventCode">
             <PageEvent />
+          </Route>
+          <Route path="/sports/addgroup">
+            <PageAddGroup />
+          </Route>
+          <Route path="/sports/:code/addgroup">
+            <PageAddGroup />
           </Route>
           <Route path="/sports/:code/:groupCode">
             <PageGroup />
