@@ -1,12 +1,29 @@
-import { IonAvatar, IonBackButton, IonButton, IonButtons, IonContent, IonDatetime, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonProgressBar, IonSearchbar, IonSelect, IonSelectOption, IonText, IonTextarea, IonTitle, IonToolbar } from '@ionic/react';
-import React, { MouseEventHandler, ReactElement, useEffect, useRef, useState } from 'react';
+import { 
+  IonAvatar,
+  IonBackButton,
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonDatetime,
+  IonHeader,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonPage,
+  IonTextarea,
+  IonTitle,
+  IonToolbar
+} from '@ionic/react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { createUseStyles } from 'react-jss';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
-import { getTranslit } from '../utils';
-
-import { EventsListItem, GroupsListItem, SportsKind, User } from '../interfaces';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+
+import { getTranslit } from '../utils';
+import { GroupsListItem, SportsKind, User } from '../interfaces';
+import { addUserEvent } from '../store';
 
 const useStyles = createUseStyles({
   submitButton: {
@@ -34,10 +51,16 @@ const useStyles = createUseStyles({
 
 const PageAddEvent: React.FC<{}> = (({}) : ReactElement => {
 
+  //define style object
   const css = useStyles();
+  //parse router query params
   const { code, groupCode } = useParams<{code: string, groupCode: string}>();
+  //use history hook to move to another location programmatically
   const history = useHistory();
 
+  const dispatch = useDispatch();
+
+  //define reactive variables to use them in forms 
   const [ name, setName ] = useState<string>('');
   const [ participantsTotal, setParticipantsTotal ] = useState<number>(10);
   const [ dateStart, setDateStart ] = useState<string>(new Date().toLocaleString());
@@ -47,7 +70,7 @@ const PageAddEvent: React.FC<{}> = (({}) : ReactElement => {
   const [ address, setAddress ] = useState<string>('');
   const [ description, setDescription ] = useState<string>('');
   
-  //current group data. We have to request it after the component is mounted
+  //fetch current group data. We have to request it after the component is mounted
   const [ group, setGroup ] = useState<GroupsListItem>();
   useEffect(() => {
     (async () => {
@@ -75,6 +98,7 @@ const PageAddEvent: React.FC<{}> = (({}) : ReactElement => {
     fileReader.readAsDataURL(e.target.files[0]);
   }
 
+  //form submit handler
   const handleSubmit = async () => {
 
     const formData = new FormData();
@@ -126,10 +150,9 @@ const PageAddEvent: React.FC<{}> = (({}) : ReactElement => {
       }
     );
     if( res.data ) {
+      dispatch(addUserEvent(eventData.code));
       history.push(res.data.redirect);
     } 
-
-    console.log(res);
   }
   
   let headerText = <>Новое событие</>;

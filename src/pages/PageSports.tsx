@@ -1,27 +1,35 @@
+import { 
+  IonContent, 
+  IonFab, 
+  IonFabButton, 
+  IonHeader, 
+  IonIcon, 
+  IonItem, 
+  IonItemDivider, 
+  IonList, 
+  IonPage, 
+  IonSearchbar, 
+  IonText, 
+  IonToolbar 
+} from '@ionic/react';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonItem, IonItemDivider, IonList, IonPage, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
 import { add } from 'ionicons/icons';
+import { useHistory } from 'react-router-dom';
 
 import { GroupsListItem, SportsKind, User } from '../interfaces';
 
 import GroupsList from '../components/GroupsList';
 import SportsList from "../components/SportsList";
-import { useHistory } from 'react-router-dom';
-
 
 const PageSports: React.FC = () => { 
 
   const history = useHistory();
-
   const [searchText, setSearchText] = useState('');
-  //const myGroups: GroupsListItem[] = mockGroupsList;
 
   const sportsKinds = useSelector( (state: {sportsKinds: SportsKind[]}) => state.sportsKinds );
   const myGroups = useSelector( (state:{ userData: User}) => {
-    
     const list: GroupsListItem[] = [];
-    
     state.userData.groups.forEach( itemGroup => {
       let listItem = {...itemGroup};
       listItem.sports = sportsKinds.find( item => item.code === itemGroup.sportskind_code )!;
@@ -31,8 +39,6 @@ const PageSports: React.FC = () => {
 
     return list;
   });
-
-  console.log('myGroups',myGroups);
 
   return (
     <IonPage>

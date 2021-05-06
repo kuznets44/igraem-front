@@ -3,6 +3,7 @@ import axios from 'axios';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
+import { User } from '../interfaces';
 
 export const fetchInitialData = createAsyncThunk(
   'fetchInitialData',
@@ -20,14 +21,22 @@ export const fetchInitialData = createAsyncThunk(
   }
 )
 
+
+
 const userData = createSlice({
   name: 'global',
   initialState: {
-    userData: {},
+    userData: <User>{},
     sportsKinds: [],
     dataIsLoaded: false
   },
   reducers: {
+    addUserGroup(state,action) {
+      state.userData.groups.push(action.payload);
+    },
+    addUserEvent(state,action) {
+      state.userData.events.push(action.payload);
+    }
   },
   // "builder callback API", recommended for TypeScript users
   extraReducers: (builder) => {
@@ -45,4 +54,8 @@ export const store = createStore(
   userData.reducer,
   composeWithDevTools(applyMiddleware(thunkMiddleware))
 );
+
+export const { addUserGroup, addUserEvent } = userData.actions;
+
+console.log(store);
 

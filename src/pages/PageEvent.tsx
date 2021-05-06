@@ -1,22 +1,41 @@
-import { IonAvatar, IonBackButton, IonButton, IonButtons, IonContent, IonFabButton, IonFooter, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonProgressBar, IonSearchbar, IonText, IonTitle, IonToolbar } from '@ionic/react';
-import React, { MouseEventHandler, ReactElement, useEffect, useRef, useState } from 'react';
+import { 
+  IonAvatar, 
+  IonBackButton, 
+  IonButton, 
+  IonButtons, 
+  IonContent, 
+  IonFabButton, 
+  IonFooter, 
+  IonHeader, 
+  IonIcon, 
+  IonInput, 
+  IonItem, 
+  IonItemDivider, 
+  IonItemGroup, 
+  IonLabel, 
+  IonList, 
+  IonPage, 
+  IonProgressBar, 
+  IonTitle, 
+  IonToolbar 
+} from '@ionic/react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useParams } from 'react-router';
-import { mockEventsList } from '../data/eventsList';
-import { users } from '../data/userData';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+
 import { getPlural, getEventDateString } from '../utils';
 import PostsList from '../components/PostsList';
 
-
+//icons
 import iconPlace from '../assets/img/icons/place.svg';
 import iconGroup from '../assets/img/icons/group_list.svg';
 import iconTime from '../assets/img/icons/time.svg';
 import iconInfo from '../assets/img/icons/info.svg';
 import iconSend from '../assets/img/icons/send.svg';
 
-import { EventsListItem, User } from '../interfaces';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { User } from '../interfaces';
 
 const useStyles = createUseStyles({
   topContainer: {
@@ -40,13 +59,12 @@ const PageEvent: React.FC<{}> = (({}) : ReactElement => {
   const { eventCode } = useParams<{code: string, groupCode: string, eventCode: string}>();
   const userData = useSelector( (state: {userData: User}) => state.userData );
 
-  const postsEndRef = useRef(null);
-
   const [ event, setEvent ] = useState<any>({});
   const [ isUserInEvent, setIsUserInEvent ] = useState(false);
 
   const [ postText, setPostText ] = useState('');
 
+  //new post creation
   const handlePostButton = (e: any) => {
     const newEvent = {...event};
     newEvent.posts.push({
@@ -68,7 +86,7 @@ const PageEvent: React.FC<{}> = (({}) : ReactElement => {
       const responseResult = await axios( `${process.env.REACT_APP_API_URL}/events/${eventCode}`);
       const eventData = responseResult.data;
       setEvent(eventData);
-console.log('event data',eventData);
+
       eventData.participants.forEach( (item: User) => {
         if( item.code === userData.code ) {
           setIsUserInEvent(true);
@@ -78,6 +96,7 @@ console.log('event data',eventData);
     })();
   },[]);
 
+  //scroll to the page's bottom after the new post was added
   useEffect(() => {
     document.querySelector("ion-content")?.scrollToBottom();
   },[postText]);

@@ -6,9 +6,13 @@ import {
   IonTabButton,
   IonTabs
  } from '@ionic/react';
-
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchInitialData } from '../store';
 
+
+//pages components
 import PageSplash from './PageSplash';
 import PageSports from './PageSports';
 import PageNotFound from './PageNotFound';
@@ -20,14 +24,11 @@ import PageMyEvents from './PageMyEvents';
 import PageAddGroup from './PageAddGroup';
 import PageAddEvent from './PageAddEvent';
 
-
-/*icons*/
+//icons
 import event from '../assets/img/icons/event.svg';
 import group from '../assets/img/icons/group.svg';
 import profile from '../assets/img/icons/profile.svg';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchInitialData } from '../store';
+
 import { User } from '../interfaces';
 
 const PageContainer: React.FC = () => {

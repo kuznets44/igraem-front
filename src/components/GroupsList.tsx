@@ -1,5 +1,5 @@
 
-import { IonAvatar, IonItem, IonLabel, IonList, IonListHeader, IonRouterLink, IonText } from '@ionic/react';
+import { IonAvatar, IonItem, IonLabel, IonList, IonText } from '@ionic/react';
 import React, { ReactElement } from 'react';
 import { GroupsListItem } from '../interfaces';
 
@@ -8,6 +8,7 @@ const GroupsList: React.FC<{name: string, list: GroupsListItem[]}> = (({name,lis
   if( list === undefined) {
     return (<></>);
   }
+  
   const listOut  = list.map( item => (
     <IonItem  routerLink={`/sports/${item.sports.code}/${item.code}`}
               key={item.code}

@@ -1,7 +1,6 @@
 
-import { IonAvatar, IonItem, IonLabel, IonList, IonListHeader, IonRouterLink, IonText } from '@ionic/react';
-import axios from 'axios';
-import React, { ReactElement, useEffect, useState } from 'react';
+import { IonAvatar, IonItem, IonLabel, IonList } from '@ionic/react';
+import React, { ReactElement } from 'react';
 import { EventsListItem } from '../interfaces';
 import { getEventDateString, getPlural } from '../utils';
 

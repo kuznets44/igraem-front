@@ -1,5 +1,5 @@
 
-import { IonAvatar, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonIcon, IonItem, IonItemGroup, IonLabel, IonList, IonListHeader, IonRouterLink, IonText } from '@ionic/react';
+import { IonAvatar, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonIcon, IonItem, IonItemGroup, IonLabel, IonList } from '@ionic/react';
 import React, { ReactElement } from 'react';
 import { createUseStyles } from 'react-jss';
 import { Post } from '../interfaces';

@@ -17,8 +17,6 @@ export const getPlural = ( number: number, wordForms: string[]) => {
 }
 
 export const getEventDateString = (event: EventsListItem): string => {
-
-  let result = '';
   const dateStart = new Date(event.dateStart);
   const dateEnd = new Date(event.dateStart);
 

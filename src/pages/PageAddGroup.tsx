@@ -1,12 +1,30 @@
-import { IonAvatar, IonBackButton, IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonProgressBar, IonSearchbar, IonSelect, IonSelectOption, IonText, IonTextarea, IonTitle, IonToolbar } from '@ionic/react';
-import React, { MouseEventHandler, ReactElement, useEffect, useRef, useState } from 'react';
+import { 
+  IonAvatar,
+  IonBackButton, 
+  IonButton, 
+  IonButtons, 
+  IonContent, 
+  IonHeader, 
+  IonInput, 
+  IonItem, 
+  IonLabel, 
+  IonList, 
+  IonPage, 
+  IonSelect, 
+  IonSelectOption, 
+  IonTextarea, 
+  IonTitle, 
+  IonToolbar 
+} from '@ionic/react';
+import React, { ReactElement, useRef, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useHistory, useParams } from 'react-router';
-import { getTranslit } from '../utils';
-
-import { EventsListItem, GroupsListItem, SportsKind, User } from '../interfaces';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { getTranslit } from '../utils';
+import { GroupsListItem, SportsKind, User } from '../interfaces';
+import { addUserGroup } from '../store';
 
 const useStyles = createUseStyles({
   submitButton: {
@@ -34,9 +52,11 @@ const useStyles = createUseStyles({
 
 const PageAddGroup: React.FC<{}> = (({}) : ReactElement => {
 
+
   const css = useStyles();
   const { code } = useParams<{code: string}>();
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const [ name, setName ] = useState<string>('');
   const [ sports, setSports ] = useState<string>('hockey');
@@ -64,15 +84,12 @@ const PageAddGroup: React.FC<{}> = (({}) : ReactElement => {
 
   const handleSubmit = async () => {
 
-
     const formData = new FormData();
-
-    console.log('sportsKinds',sportsKinds);
-
-    const groupData = {
+    const groupData: GroupsListItem = {
       name,
       code: getTranslit(name), 
-      sports: sportsKinds.find( item => item.code === sports),
+      sports: sportsKinds.find( item => item.code === sports)!,
+      sportskind_code: sportsKinds.find( item => item.code === sports)!.code,
       avatar: "",
       active: true,
       country,
@@ -99,8 +116,6 @@ const PageAddGroup: React.FC<{}> = (({}) : ReactElement => {
 
     formData.append("data",JSON.stringify(groupData));
 
-    console.log('formData',formData);
-    
     const res = await axios.post(
       process.env.REACT_APP_API_URL + '/groups',
       formData,
@@ -111,10 +126,9 @@ const PageAddGroup: React.FC<{}> = (({}) : ReactElement => {
       }
     );
     if( res.data ) {
+      dispatch(addUserGroup(groupData));
       history.push(res.data.redirect);
     } 
-
-    console.log(res);
   }
   
   return (

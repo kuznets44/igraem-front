@@ -1,19 +1,38 @@
-import { IonAvatar, IonBackButton, IonButton, IonButtons, IonContent, IonFabButton, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonProgressBar, IonSearchbar, IonText, IonTitle, IonToolbar } from '@ionic/react';
+import { 
+  IonAvatar, 
+  IonBackButton, 
+  IonButton, 
+  IonButtons, 
+  IonContent, 
+  IonFabButton, 
+  IonHeader, 
+  IonIcon, 
+  IonItem, 
+  IonItemDivider, 
+  IonItemGroup, 
+  IonLabel, 
+  IonList, 
+  IonPage, 
+  IonProgressBar, 
+  IonTitle, 
+  IonToolbar 
+} from '@ionic/react';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useHistory, useParams } from 'react-router';
-import { users } from '../data/userData';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+
 import { getPlural } from '../utils';
+import { EventsListItem, SportsKind, User } from '../interfaces';
 
 import EventsList from '../components/EventsList';
 
+//icons
+import { add } from 'ionicons/icons';
 import place from '../assets/img/icons/place.svg';
 import info from '../assets/img/icons/info.svg';
-import { add } from 'ionicons/icons';
 
-import { EventsListItem, GroupsListItem, SportsKind, User } from '../interfaces';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
 
 const useStyles = createUseStyles({
   topContainer: {
@@ -67,12 +86,7 @@ const PageGroup: React.FC<{}> = (({}) : ReactElement => {
     })();
   },[]);
 
-  const participants = users.filter( item => item.groups.includes(groupCode) );
-
-  const handleClick = () => {
-    
-  };
-
+  
   if( group.name === undefined ) {
     return (
       <IonPage>
@@ -111,7 +125,7 @@ const PageGroup: React.FC<{}> = (({}) : ReactElement => {
             )
           }
         </IonItemGroup>
-        <IonButton class="ion-padding-horizontal" onClick={handleClick} style={ { width: "100%"} }>
+        <IonButton class="ion-padding-horizontal" style={ { width: "100%"} }>
           {isUserInGroup ? 'Покинуть' : 'Вступить в'} сообщество
         </IonButton>
         <IonList lines="none">

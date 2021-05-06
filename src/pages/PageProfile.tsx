@@ -1,24 +1,28 @@
-import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
+import { 
+  IonAvatar, 
+  IonContent, 
+  IonIcon, 
+  IonItem, 
+  IonItemDivider, 
+  IonItemGroup, 
+  IonLabel, 
+  IonList, 
+  IonPage
+} from '@ionic/react';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useParams } from 'react-router';
-import { mockEventsList } from '../data/eventsList';
-import { users } from '../data/userData';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+
 import { getPlural } from '../utils';
-import PostsList from '../components/PostsList';
+import { EventsListItem, User } from '../interfaces';
 
+import EventsList from '../components/EventsList';
 
+//icons
 import iconPlace from '../assets/img/icons/place.svg';
 import iconGroup from '../assets/img/icons/group_list.svg';
-import iconTime from '../assets/img/icons/time.svg';
-import iconInfo from '../assets/img/icons/info.svg';
-
-import { EventsListItem, GroupsListItem, User } from '../interfaces';
-import EventsList from '../components/EventsList';
-import { mockGroupsList } from '../data/groupsList';
-import { useSelector } from 'react-redux';
-import { State } from 'ionicons/dist/types/stencil-public-runtime';
-import axios from 'axios';
 
 const useStyles = createUseStyles({
   maxAvatar: {
@@ -51,6 +55,8 @@ const PageProfile: React.FC<{}> = (({}) : ReactElement => {
   const { userId } = useParams<{userId: string}>();
 
   const user = useSelector( (state: { userData: User})=> state.userData);
+
+  //fetch user events list
   const [ eventsList, setEventsList ] = useState<EventsListItem[]>([]);
   useEffect(() => {
     (async () => {
@@ -58,7 +64,6 @@ const PageProfile: React.FC<{}> = (({}) : ReactElement => {
       setEventsList(responseResult.data);
     })();
   },[]);
-
 
   
   return (

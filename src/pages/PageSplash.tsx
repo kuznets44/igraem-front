@@ -1,9 +1,7 @@
 import { IonContent, IonImg, IonItem, IonLabel, IonPage, IonProgressBar, IonRouterLink } from '@ionic/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import logo from '../assets/img/splash.jpg';
-//import logo from '../assets/img/splash_data_uri.jpeg';
 import { createUseStyles } from 'react-jss';
-
 
 const useStyles = createUseStyles({
   splashLink: {

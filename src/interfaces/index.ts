@@ -2,13 +2,19 @@ export interface GroupsListItem {
   code: string,
   name: string,
   avatar: string,
+  active: boolean,
   sportskind_code: string,
   sports: {
     code: string,
     name: string
   },
+  country?: string,
   city?: string,
-  images?: string[]
+  address: string,
+  description: string,
+  createdBy: string,
+  createdAt: Date,
+  participants: Participant[]
 }
 
 export interface Post {
@@ -19,6 +25,13 @@ export interface Post {
   },
   createdAt: string,
   text: string
+}
+
+export interface Participant {
+  name: string,
+  lastName: string,
+  code: string,
+  avatar: string,
 }
 
 export interface User {

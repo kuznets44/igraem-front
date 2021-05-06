@@ -1,11 +1,11 @@
 import { IonContent, IonItem, IonPage, IonText } from '@ionic/react';
 import React, { ReactElement, useEffect, useState } from 'react';
-
-
-import { EventsListItem, GroupsListItem, User } from '../interfaces';
-import EventsList from '../components/EventsList';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+
+import { EventsListItem, User } from '../interfaces';
+
+import EventsList from '../components/EventsList';
 
 const PageMyEvents: React.FC<{}> = (({}) : ReactElement => {
 

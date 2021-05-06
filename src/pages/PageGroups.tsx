@@ -1,9 +1,22 @@
-import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonPage, IonProgressBar, IonSearchbar, IonButtons, IonToolbar, IonBackButton } from '@ionic/react';
+import { 
+  IonContent, 
+  IonFab, 
+  IonFabButton, 
+  IonHeader, 
+  IonIcon, 
+  IonPage, 
+  IonProgressBar, 
+  IonSearchbar, 
+  IonButtons, 
+  IonToolbar, 
+  IonBackButton 
+} from '@ionic/react';
 import axios from 'axios';
 import { add } from 'ionicons/icons';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
+
 import GroupsList from '../components/GroupsList';
 
 import { GroupsListItem, SportsKind, User } from '../interfaces';
@@ -16,13 +29,12 @@ const PageGroups: React.FC<{}> = (({}) : ReactElement => {
 
   const sportsKind = useSelector( (state: {sportsKinds: SportsKind[]}) => state.sportsKinds.find ( item => item.code === code) );
   const userData = useSelector( (state: {userData: User}) => state.userData );
-  //const sportType = sportTypes.find( item => item.code === code)!;
 
   const [searchText, setSearchText] = useState('');
   const [ allGroups, setAllGroups ] = useState<GroupsListItem[]>([]);
   const [ myGroups, setMyGroups ] = useState<GroupsListItem[]>([]);
 
-  //получаем данные о группах в текущем виде спорта
+  //fetch groups data
   useEffect(() => {
     (async () => {
       const responseResult = await axios( `${process.env.REACT_APP_API_URL}/groups/?sportskind=${code}`);

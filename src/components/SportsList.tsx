@@ -1,14 +1,12 @@
 
-import { IonImg, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/react';
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { IonImg, IonLabel, IonTabBar, IonTabButton } from '@ionic/react';
+import React from 'react';
 import { SportsKind } from '../interfaces';
 import { useSelector } from 'react-redux';
 
 const SportsList: React.FC = () => {
 
   const sportsKindsList = useSelector( (state: {sportsKinds: SportsKind[]}) => state.sportsKinds );
-
 
   return (
     <IonTabBar style={{height: '70px', marginTop: '10px', border: 'none'}}>
