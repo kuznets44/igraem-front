@@ -18,6 +18,7 @@ import PageEvent from './PageEvent';
 import PageProfile from './PageProfile';
 import PageMyEvents from './PageMyEvents';
 import PageAddGroup from './PageAddGroup';
+import PageAddEvent from './PageAddEvent';
 
 
 /*icons*/
@@ -51,6 +52,9 @@ const PageContainer: React.FC = () => {
         <Switch>
           <Route path="/user-:userId">
             <PageProfile />
+          </Route>
+          <Route path="/sports/:code/:groupCode/addevent">
+            <PageAddEvent />
           </Route>
           <Route path="/sports/:code/:groupCode/event-:eventCode">
             <PageEvent />

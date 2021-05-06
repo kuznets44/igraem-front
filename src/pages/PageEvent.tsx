@@ -1,5 +1,5 @@
-import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonProgressBar, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
-import React, { ReactElement, useEffect, useState } from 'react';
+import { IonAvatar, IonBackButton, IonButton, IonButtons, IonContent, IonFabButton, IonFooter, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonProgressBar, IonSearchbar, IonText, IonTitle, IonToolbar } from '@ionic/react';
+import React, { MouseEventHandler, ReactElement, useEffect, useRef, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useParams } from 'react-router';
 import { mockEventsList } from '../data/eventsList';
@@ -12,6 +12,7 @@ import iconPlace from '../assets/img/icons/place.svg';
 import iconGroup from '../assets/img/icons/group_list.svg';
 import iconTime from '../assets/img/icons/time.svg';
 import iconInfo from '../assets/img/icons/info.svg';
+import iconSend from '../assets/img/icons/send.svg';
 
 import { EventsListItem, User } from '../interfaces';
 import axios from 'axios';
@@ -39,8 +40,28 @@ const PageEvent: React.FC<{}> = (({}) : ReactElement => {
   const { eventCode } = useParams<{code: string, groupCode: string, eventCode: string}>();
   const userData = useSelector( (state: {userData: User}) => state.userData );
 
+  const postsEndRef = useRef(null);
+
   const [ event, setEvent ] = useState<any>({});
   const [ isUserInEvent, setIsUserInEvent ] = useState(false);
+
+  const [ postText, setPostText ] = useState('');
+
+  const handlePostButton = (e: any) => {
+    const newEvent = {...event};
+    newEvent.posts.push({
+      createdAt: new Date().toLocaleString(),
+      by: {
+        name: userData.name,
+        lastName: userData.lastName,
+        code: userData.code,
+        avatar: userData.avatar,
+      },
+      text: postText
+    });
+    setEvent(newEvent);
+    setPostText('');
+  }
 
   useEffect(() => {
     (async () => {
@@ -57,6 +78,10 @@ console.log('event data',eventData);
     })();
   },[]);
 
+  useEffect(() => {
+    document.querySelector("ion-content")?.scrollToBottom();
+  },[postText]);
+
   if( event.name === undefined ) {
     return (
       <IonPage>
@@ -69,11 +94,20 @@ console.log('event data',eventData);
   
   return (
     <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton style={ {display: 'block' } } color="primary" />
+            <IonTitle>{event.name}</IonTitle>
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
       <IonContent>
-        <div className={css.topContainer} style={ {backgroundImage: `url(/assets/images/events/${event.avatar}`} }></div>
+        { event.avatar &&
+          <div className={css.topContainer} style={ {backgroundImage: `url(${process.env.REACT_APP_PUBLIC_URL}/images/events/${event.avatar}`} }></div>
+        }
         <IonItem lines="none">
           <IonLabel>
-            <h2><b>{event.name}</b></h2>
             <p>{event.sports.name} | <b>Сообщество {event.group.name}</b></p>
           </IonLabel>
         </IonItem>
@@ -92,7 +126,7 @@ console.log('event data',eventData);
             {
               event.participants.slice(0,4).map( (item: User, index: number) =>
               <IonAvatar className={css.miniAvatar} key={index}>
-                <img src={`/assets/images/users/${item.avatar}`} />
+                <img src={`${process.env.REACT_APP_PUBLIC_URL}/images/users/${item.avatar || 'no-user.svg'}`} />
               </IonAvatar> 
               )
             }
@@ -122,7 +156,17 @@ console.log('event data',eventData);
           <h3>СООБЩЕНИЯ</h3>
         </IonItem>
         <PostsList list={event.posts} />
+        <div id="postsEnd" />
       </IonContent>
+
+      <IonFooter className="ion-no-border">
+        <IonToolbar>
+          <IonInput placeholder="Сообщение" value={postText} style={ {width: '100%'} } onIonChange={e => setPostText(e.detail.value!)} />
+          <IonFabButton slot="end"  size="small" onClick={handlePostButton}>
+            <IonIcon color="white" icon={iconSend} />
+          </IonFabButton>
+        </IonToolbar>
+      </IonFooter>
     </IonPage>
   );
 });

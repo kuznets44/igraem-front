@@ -240,6 +240,10 @@ ion-item-divider{
   min-height: 10px!important;
 }
 
+ion-title {
+  font-weight: bold;
+}
+
 .sc-ion-searchbar-md-h {
   --box-shadow: none!important;
 }

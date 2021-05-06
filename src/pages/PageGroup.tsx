@@ -1,9 +1,7 @@
-import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonProgressBar, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
+import { IonAvatar, IonBackButton, IonButton, IonButtons, IonContent, IonFabButton, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonProgressBar, IonSearchbar, IonText, IonTitle, IonToolbar } from '@ionic/react';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
-import { useParams } from 'react-router';
-import { mockGroupsList } from '../data/groupsList';
-import { mockEventsList } from '../data/eventsList';
+import { useHistory, useParams } from 'react-router';
 import { users } from '../data/userData';
 import { getPlural } from '../utils';
 
@@ -11,6 +9,8 @@ import EventsList from '../components/EventsList';
 
 import place from '../assets/img/icons/place.svg';
 import info from '../assets/img/icons/info.svg';
+import { add } from 'ionicons/icons';
+
 import { EventsListItem, GroupsListItem, SportsKind, User } from '../interfaces';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
@@ -34,6 +34,7 @@ const useStyles = createUseStyles({
 const PageGroup: React.FC<{}> = (({}) : ReactElement => {
 
   const css = useStyles();
+  const history = useHistory();
   const { code, groupCode } = useParams<{code: string, groupCode: string}>();
 
   const sportsKind = useSelector( (state: {sportsKinds: SportsKind[]}) => state.sportsKinds.find ( item => item.code === code) );
@@ -84,19 +85,28 @@ const PageGroup: React.FC<{}> = (({}) : ReactElement => {
   
   return (
     <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton style={ {display: 'block' } } color="primary" />
+            <IonTitle>{group.name}</IonTitle>
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
       <IonContent>
-        <div className={css.topContainer} style={ {backgroundImage: `url(/assets/images/groups/${group.avatar}`} }></div>
+        { group.avatar &&
+          <div className={css.topContainer} style={ {backgroundImage: `url(${process.env.REACT_APP_PUBLIC_URL}/images/groups/${group.avatar}`} }></div>
+        }
         <IonItem>
           <IonLabel>
-            <h2><b>{group.name}</b></h2>
-            <p>{[group.sports.name, group.city].join(', ')} | <b>{ getPlural(participants.length,['участник','участника','участников']) }</b></p>
+            <p>{[group.sports.name, group.city].join(', ')} | <b>{ getPlural(group.participants.length,['участник','участника','участников']) }</b></p>
           </IonLabel>
         </IonItem>
         <IonItemGroup class="ion-padding">
           {
             group.participants.slice(0,10).map( (item: User, index: number) =>
              <IonAvatar className={css.miniAvatar} key={index}>
-               <img src={`/assets/images/users/${item.avatar}`} />
+               <img src={`${process.env.REACT_APP_PUBLIC_URL}/images/users/${item.avatar || 'no-user.svg'}`} />
              </IonAvatar> 
             )
           }
@@ -121,6 +131,12 @@ const PageGroup: React.FC<{}> = (({}) : ReactElement => {
         <IonItemDivider></IonItemDivider>
         <IonItem>
           <h3>СОБЫТИЯ</h3>
+          <IonFabButton slot="end"
+                        size="small"
+                        onClick={() => history.push(`/sports/${code}/${groupCode}/addevent`)}
+                        >
+            <IonIcon icon={add} />
+          </IonFabButton>
         </IonItem>
         <EventsList list={eventsList} />
       </IonContent>

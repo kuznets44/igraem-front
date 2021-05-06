@@ -12,7 +12,7 @@ const EventsList: React.FC<{list: EventsListItem[]}> = (({list}) : ReactElement 
               key={item.code}
     >
       <IonAvatar slot="start">
-        <img src={`/assets/images/events/${item.avatar}`} />
+        <img src={`${process.env.REACT_APP_PUBLIC_URL}/images/events/${item.avatar || 'no-event.svg'}`} />
       </IonAvatar>
       <IonLabel>
         <h2>{item.name}</h2>

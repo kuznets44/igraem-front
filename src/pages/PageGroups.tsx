@@ -1,4 +1,4 @@
-import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonPage, IonProgressBar, IonSearchbar, IonText, IonToolbar } from '@ionic/react';
+import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonPage, IonProgressBar, IonSearchbar, IonButtons, IonToolbar, IonBackButton } from '@ionic/react';
 import axios from 'axios';
 import { add } from 'ionicons/icons';
 import React, { ReactElement, useEffect, useState } from 'react';
@@ -54,6 +54,9 @@ const PageGroups: React.FC<{}> = (({}) : ReactElement => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton style={ {display: 'block' } } color="primary" />
+          </IonButtons>
           <IonSearchbar color="white" placeholder={`${sportsKind!.name}: поиск сообществ`} value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>
         </IonToolbar>
       </IonHeader>

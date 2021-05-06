@@ -66,8 +66,8 @@ const PageProfile: React.FC<{}> = (({}) : ReactElement => {
       <IonContent>
         <IonItem lines="none">
           <IonAvatar className={css.maxAvatar} slot="start">
-                <img src={`/assets/images/users/${user.avatar}`} />
-              </IonAvatar> 
+            <img src={`${process.env.REACT_APP_PUBLIC_URL}/images/users/${user.avatar || 'no-user.svg'}`} />
+          </IonAvatar> 
           <IonLabel>
             <h1 className="ion-padding-start"><b>{[user.name,user.lastName].join(' ')}</b></h1>
             <IonList>
@@ -86,7 +86,7 @@ const PageProfile: React.FC<{}> = (({}) : ReactElement => {
                 {
                   user.groups.slice(0,4).map( (item, index) =>
                   <IonAvatar className={css.miniAvatar} key={index}>
-                    <img src={`/assets/images/groups/${item.avatar}`} />
+                    <img src={`${process.env.REACT_APP_PUBLIC_URL}/images/groups/${item.avatar || 'no-group.svg'}`} />
                   </IonAvatar> 
                   )
                 }

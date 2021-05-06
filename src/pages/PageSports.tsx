@@ -25,6 +25,7 @@ const PageSports: React.FC = () => {
     state.userData.groups.forEach( itemGroup => {
       let listItem = {...itemGroup};
       listItem.sports = sportsKinds.find( item => item.code === itemGroup.sportskind_code )!;
+      listItem.avatar = listItem.avatar !== '' ? listItem.avatar : 'no-group.svg';
       list.push(listItem);
     });
 

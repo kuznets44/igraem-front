@@ -1,4 +1,4 @@
-import { IonAvatar, IonBackButton, IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonProgressBar, IonSearchbar, IonSelect, IonSelectOption, IonText, IonTextarea, IonTitle, IonToolbar } from '@ionic/react';
+import { IonAvatar, IonBackButton, IonButton, IonButtons, IonContent, IonDatetime, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonPage, IonProgressBar, IonSearchbar, IonSelect, IonSelectOption, IonText, IonTextarea, IonTitle, IonToolbar } from '@ionic/react';
 import React, { MouseEventHandler, ReactElement, useEffect, useRef, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useHistory, useParams } from 'react-router';
@@ -32,26 +32,39 @@ const useStyles = createUseStyles({
   }
 });
 
-const PageAddGroup: React.FC<{}> = (({}) : ReactElement => {
+const PageAddEvent: React.FC<{}> = (({}) : ReactElement => {
 
   const css = useStyles();
-  const { code } = useParams<{code: string}>();
+  const { code, groupCode } = useParams<{code: string, groupCode: string}>();
   const history = useHistory();
 
   const [ name, setName ] = useState<string>('');
-  const [ sports, setSports ] = useState<string>('hockey');
+  const [ participantsTotal, setParticipantsTotal ] = useState<number>(10);
+  const [ dateStart, setDateStart ] = useState<string>(new Date().toLocaleString());
+  const [ dateEnd, setDateEnd ] = useState<string>(new Date().toLocaleString());
   const [ country, setCountry ] = useState<string>('Россия');
   const [ city, setCity ] = useState<string>('');
   const [ address, setAddress ] = useState<string>('');
   const [ description, setDescription ] = useState<string>('');
+  
+  //current group data. We have to request it after the component is mounted
+  const [ group, setGroup ] = useState<GroupsListItem>();
+  useEffect(() => {
+    (async () => {
+      const responseResult = await axios.get( `${process.env.REACT_APP_API_URL}/groups/${groupCode}`);
+      setGroup(responseResult.data);
+    })();
+  },[]);
 
+  //select data from redux
   const sportsKinds = useSelector( (state: {sportsKinds: SportsKind[]}) => state.sportsKinds);
   const userData = useSelector( (state: {userData: User}) => state.userData);
   
+  //refs for file input and image handling
   const fileRef = useRef<HTMLInputElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
 
-
+  //handler for avatar preview
   const handleFileChange = (e: any) => {
     const fileReader = new FileReader();
 
@@ -64,17 +77,21 @@ const PageAddGroup: React.FC<{}> = (({}) : ReactElement => {
 
   const handleSubmit = async () => {
 
-
     const formData = new FormData();
 
-    console.log('sportsKinds',sportsKinds);
-
-    const groupData = {
+    const eventData = {
       name,
       code: getTranslit(name), 
-      sports: sportsKinds.find( item => item.code === sports),
-      avatar: "",
       active: true,
+      avatar: "",
+      sports: sportsKinds.find( item => item.code === code),
+      group: {
+        code: group?.code,
+        name: group?.name,
+      },
+      participantsTotal,
+      dateStart: new Date(dateStart),
+      dateEnd: new Date(dateEnd),
       country,
       city,
       address,
@@ -88,21 +105,19 @@ const PageAddGroup: React.FC<{}> = (({}) : ReactElement => {
           lastName: userData.lastName,
           avatar: userData.avatar
         }
-      ]
+      ],
+      posts: []
     };
     
-    console.log(fileRef.current);
-    if(fileRef.current && fileRef.current?.files) {
+    if(fileRef.current && fileRef.current?.files?.length) {
       formData.append("avatarFile",fileRef.current?.files[0]);
-      groupData.avatar = fileRef.current?.files[0].name;
+      eventData.avatar = fileRef.current?.files[0].name || '';
     }
 
-    formData.append("data",JSON.stringify(groupData));
+    formData.append("data",JSON.stringify(eventData));
 
-    console.log('formData',formData);
-    
     const res = await axios.post(
-      process.env.REACT_APP_API_URL + '/groups',
+      process.env.REACT_APP_API_URL + '/events',
       formData,
       {
         headers: {
@@ -117,13 +132,18 @@ const PageAddGroup: React.FC<{}> = (({}) : ReactElement => {
     console.log(res);
   }
   
+  let headerText = <>Новое событие</>;
+  if(group) {
+    headerText = <>{group.name}: новое событие</>;
+  }
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
             <IonBackButton style={ {display: 'block' } } color="primary" />
-            <IonTitle>Новое сообщество</IonTitle>
+            <IonTitle>{ headerText}</IonTitle>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
@@ -139,14 +159,30 @@ const PageAddGroup: React.FC<{}> = (({}) : ReactElement => {
               <IonInput value={name} onIonChange={e => setName(e.detail.value!)}></IonInput>
             </IonItem>
             <IonItem>
-              <IonLabel color="primary" position="floating">Вид спорта</IonLabel>
-              <IonSelect value={sports} placeholder="Выберите" onIonChange={e => setSports(e.detail.value!)}>
-                <IonSelectOption value="hockey">Хоккей</IonSelectOption>
-                <IonSelectOption value="football">Футбол</IonSelectOption>
-              </IonSelect>
+              <IonLabel color="primary" position="floating">Количество участников</IonLabel>
+              <IonInput value={participantsTotal} type="number" onIonChange={e => setParticipantsTotal(parseInt(e.detail.value!))}></IonInput>
             </IonItem>  
           </IonList>
         </IonItem>
+
+        <IonItem lines="none">
+          <IonLabel>
+            <h1><b>Дата и время</b></h1>
+          </IonLabel>
+        </IonItem>
+        <IonItem>
+            <IonLabel color="primary" position="floating">Начало</IonLabel>
+            <IonDatetime  displayFormat="D MMM YYYY H:mm"
+                          min="2021" max="2025" value={dateStart} onIonChange={e => setDateStart(e.detail.value!)}>
+            </IonDatetime>
+        </IonItem>
+        <IonItem>
+            <IonLabel color="primary" position="floating">Окончание</IonLabel>
+            <IonDatetime  displayFormat="D MMM YYYY H:mm"
+                          min="2021" max="2025" value={dateEnd} onIonChange={e => setDateEnd(e.detail.value!)}>
+            </IonDatetime>
+        </IonItem>
+
         <IonItem lines="none">
           <IonLabel>
             <h1><b>Местоположение</b></h1>
@@ -169,7 +205,7 @@ const PageAddGroup: React.FC<{}> = (({}) : ReactElement => {
             <IonTextarea autoGrow value={description} onIonChange={e => setDescription(e.detail.value!)}></IonTextarea>
         </IonItem>
 
-        <IonButton class={css.submitButton} onClick={handleSubmit} className="ion-padding-horizontal">
+        <IonButton color="primary" class={css.submitButton} onClick={handleSubmit} className="ion-padding-horizontal">
           СОЗДАТЬ
         </IonButton>
       </IonContent>
@@ -177,4 +213,4 @@ const PageAddGroup: React.FC<{}> = (({}) : ReactElement => {
   );
 });
 
-export default PageAddGroup;
+export default PageAddEvent;

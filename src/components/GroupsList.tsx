@@ -13,7 +13,7 @@ const GroupsList: React.FC<{name: string, list: GroupsListItem[]}> = (({name,lis
               key={item.code}
     >
       <IonAvatar slot="start">
-        <img src={`/assets/images/groups/${item.avatar}`} />
+        <img src={`${process.env.REACT_APP_PUBLIC_URL}/images/groups/${item.avatar || 'no-group.svg'}`} />
       </IonAvatar>
       <IonLabel>
         <h2>{item.name}</h2>
